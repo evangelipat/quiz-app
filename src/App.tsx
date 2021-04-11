@@ -1,26 +1,68 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { useState } from "react";
+import QuestionCard from "./components/QuestionCard";
+import { fetchQuizQuestions } from "./API";
+import { QuestionState, Difficulty } from "./API";
 
-function App() {
+type AnswerObject = {
+  question: string;
+  answer: string;
+  correct: boolean;
+  correctAnswer: string;
+}; //TODO:extend it to show the answers of the user at the end of the game
+
+const Total_Questions = 10;
+
+const App = () => {
+  const [loading, setLoading] = useState(false);
+  const [questions, setQuestions] = useState<QuestionState[]>([]);
+  const [number, setNumber] = useState(0);
+  const [userAnswers, setUserAnswers] = useState<AnswerObject[]>([]);
+  const [score, setScore] = useState(0);
+  const [gameOver, setGameOver] = useState(true);
+
+  //console.log(fetchQuizQuestions(Total_Questions, Difficulty.EASY));
+
+  console.log(questions);
+
+  const startTrivia = async () => {
+    setLoading(true);
+    setGameOver(false);
+    const newQuestions = await fetchQuizQuestions(
+      Total_Questions,
+      Difficulty.EASY
+    );
+    setQuestions(newQuestions); //TODO: try catch to hanle the await
+    setScore(0);
+    setUserAnswers([]);
+    setNumber(0);
+    setLoading(false);
+  };
+
+  const checkAnswer = (e: React.MouseEvent<HTMLButtonElement>) => {};
+
+  const nextQuestion = () => {};
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <h1>React Quiz</h1>
+      <button className="start" onClick={startTrivia}>
+        Start game
+      </button>
+      <p className="score">Score:</p>
+      <p>Loading Questions...</p>
+      {/* <QuestionCard
+        questionNr={number + 1}
+        totalQuestions={Total_Questions}
+        question={questions[number].question}
+        answers={questions[number].answer} //??s
+        userAnswer={userAnswers ? userAnswers[number] : undefined}
+        callback={checkAnswer}
+      /> */}
+      <button className="next" onClick={nextQuestion}>
+        Next Questions
+      </button>
     </div>
   );
-}
+};
 
 export default App;
